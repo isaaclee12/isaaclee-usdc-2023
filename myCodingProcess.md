@@ -107,4 +107,4 @@ scannedTextObj =
 
 - TODO: Finish examples, Email the questions, and then while waiting trying to finish all of the edge cases
 
-- 
+- Took dracula and made it in to a JSON via both python and a few manual edits

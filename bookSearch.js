@@ -1,16 +1,5 @@
-/** 
- * RECOMMENDATION
- * 
- * To test your code, you should open "tester.html" in a web browser.
- * You can then use the "Developer Tools" to see the JavaScript console.
- * There, you will see the results unit test execution. You are welcome
- * to run the code any way you like, but this is similar to how we will
- * run your code submission.
- * 
- * The Developer Tools in Chrome are available under the "..." menu, 
- * futher hidden under the option "More Tools." In Firefox, they are 
- * under the hamburger (three horizontal lines), also hidden under "More Tools." 
- */
+const dracula = require('./dracula.json');
+const multipleBooks = require('./multipleBooks.json');
 
 /**
  * Searches for matches in scanned text.
@@ -75,9 +64,11 @@ const twentyLeaguesIn = [
         ] 
     }
 ]
+
+
     
 /** Example output object */
-const twentyLeaguesOut = {
+const twentyLeaguesOutTest1 = {
     "SearchTerm": "the",
     "Results": [
         {
@@ -88,8 +79,13 @@ const twentyLeaguesOut = {
     ]
 }
 
+const twentyLeaguesOutTest2 = {
+    "SearchTerm": "egg",
+    "Results": []
+}
+
 /** Example output object */
-const twentyLeaguesOutTest4 = {
+const twentyLeaguesOutTest3 = {
     "SearchTerm": "The",
     "Results": [
         {
@@ -105,7 +101,7 @@ const twentyLeaguesOutTest4 = {
 | | | | \ | |_ _|_   _| |_   _| ____/ ___|_   _/ ___| 
 | | | |  \| || |  | |     | | |  _| \___ \ | | \___ \ 
 | |_| | |\  || |  | |     | | | |___ ___) || |  ___) |
- \___/|_| \_|___| |_|     |_| |_____|____/ |_| |____/    Nice ASCII art.
+ \___/|_| \_|___| |_|     |_| |_____|____/ |_| |____/
                                                       
  */
 
@@ -116,42 +112,63 @@ const twentyLeaguesOutTest4 = {
  * Please add your unit tests below.
  * */
 
-/** We can check that, given a known input, we get a known output. */
-const test1result = findSearchTermInBooks("the", twentyLeaguesIn);
-if (JSON.stringify(twentyLeaguesOut) === JSON.stringify(test1result)) {
-    console.log("PASS: Test 1");
-} else {
-    console.log("FAIL: Test 1");
-    console.log("Expected:", twentyLeaguesOut);
-    console.log("Received:", test1result);
+// Refactored test helper function
+function testFindSearchTermInBooksHelper(testNumber, searchTerm, bookInput, expectedLength, expectedResult) {
+
+    testResult = findSearchTermInBooks(searchTerm, bookInput);
+
+    // length test
+    if (testResult.Results.length !== expectedLength) {
+        console.log("FAIL: Test", testNumber);
+        console.log("Expected Length:", expectedLength);
+        console.log("Received Length:", testResult.Results.length);
+        return false;
+    }
+
+    // exact match test
+    if (JSON.stringify(testResult) !== JSON.stringify(expectedResult)) {
+        console.log("FAIL: Test", testNumber);
+        console.log("Expected:", expectedResult);
+        console.log("Received:", testResult);
+        return false;
+    }
+
+    // if all tests passed, return true
+    console.log("PASS: Test", testNumber)
+    return true;
 }
 
-/** We could choose to check that we get the right number of results. */
-const test2result = findSearchTermInBooks("the", twentyLeaguesIn); 
-if (test2result.Results.length == 1) {
-    console.log("PASS: Test 2");
-} else {
-    console.log("FAIL: Test 2");
-    console.log("Expected:", twentyLeaguesOut.Results.length);
-    console.log("Received:", test2result.Results.length);
+
+function testFindSearchTermInBooks() {
+    if (
+    // Positive test - check that the results has a specific length and content 
+    testFindSearchTermInBooksHelper(1, "the", twentyLeaguesIn, 1, twentyLeaguesOutTest1) &&
+
+    // Negative test - check that results array is returned empty when searching for a term not in the book.
+    testFindSearchTermInBooksHelper(2, "egg", twentyLeaguesIn, 0, twentyLeaguesOutTest2) &&
+
+    // Case sensitive test: "The" vs "the"
+    testFindSearchTermInBooksHelper(3, "The", twentyLeaguesIn, 1, twentyLeaguesOutTest3)
+    ) 
+    {
+        console.log("ALL TESTS PASSED");
+    } else {
+        console.log("TESTS FAILED: See above test for info");
+    }
 }
 
-/* Negative test - check that results array is returned empty when searching for a term not in the book. */
-const test3result = findSearchTermInBooks("egg", twentyLeaguesIn);
-if (test3result.Results.length === 0) {
-    console.log("PASS: Test 3");
-} else {
-    console.log("FAIL: Test 3");
-    console.log("Expected emptry array");
-    console.log("Received:", test3result.Results);
-}
+testFindSearchTermInBooks();
 
-// Case sensitive test: "The" vs "the"
-const test4result = findSearchTermInBooks("The", twentyLeaguesIn);
-if (JSON.stringify(twentyLeaguesOutTest4) === JSON.stringify(test4result)) {
-    console.log("PASS: Test 4");
-} else {
-    console.log("FAIL: Test 4");
-    console.log("Expected:", twentyLeaguesOutTest4);
-    console.log("Received:", test4result);
-}
+console.log("\n\nDRACULAAAAAAAA");
+console.log(findSearchTermInBooks("The",dracula));
+console.log(findSearchTermInBooks("vampire",dracula));
+console.log(findSearchTermInBooks("Dracula",dracula));
+console.log(findSearchTermInBooks("dracula",dracula));
+console.log(findSearchTermInBooks("Mina",dracula));
+
+console.log("\n\nall the books");
+console.log(findSearchTermInBooks("The",multipleBooks));
+console.log(findSearchTermInBooks("the",multipleBooks));
+console.log(findSearchTermInBooks("Dracula",multipleBooks));
+console.log(findSearchTermInBooks("vampire",multipleBooks));
+console.log(findSearchTermInBooks("Canadian",multipleBooks));
