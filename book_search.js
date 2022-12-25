@@ -18,15 +18,36 @@
  * @param {JSON} scannedTextObj - A JSON object representing the scanned text.
  * @returns {JSON} - Search results.
  * */ 
+
  function findSearchTermInBooks(searchTerm, scannedTextObj) {
     /** You will need to implement your search and 
      * return the appropriate object here. */
 
-    var result = {
-        "SearchTerm": "",
+    let result = {
+        "SearchTerm": searchTerm,
         "Results": []
     };
+
+    for (book of scannedTextObj) {
+        // console.log(book.Content);
+        for (item of book.Content) {
+
+            let lineWhereFound = {}; // result to add if found
+            // console.log(item.Text);
+            if (item.Text.includes(searchTerm)) { // if we find the search term in the content item, add to result
+                lineWhereFound["ISBN"] = book.ISBN;
+                lineWhereFound["Page"] = item.Page;
+                lineWhereFound["Line"] = item.Line;
+
+                // console.log(lineWhereFound);
+
+                result.Results.push(lineWhereFound);                
+            }
+        }
+    }
     
+    // console.log(result);
+
     return result; 
 }
 
@@ -67,12 +88,24 @@ const twentyLeaguesOut = {
     ]
 }
 
+/** Example output object */
+const twentyLeaguesOutTest4 = {
+    "SearchTerm": "The",
+    "Results": [
+        {
+            "ISBN": "9780000528531",
+            "Page": 31,
+            "Line": 8
+        }
+    ]
+}
+
 /*
  _   _ _   _ ___ _____   _____ _____ ____ _____ ____  
 | | | | \ | |_ _|_   _| |_   _| ____/ ___|_   _/ ___| 
 | | | |  \| || |  | |     | | |  _| \___ \ | | \___ \ 
 | |_| | |\  || |  | |     | | | |___ ___) || |  ___) |
- \___/|_| \_|___| |_|     |_| |_____|____/ |_| |____/ 
+ \___/|_| \_|___| |_|     |_| |_____|____/ |_| |____/    Nice ASCII art.
                                                       
  */
 
@@ -101,4 +134,24 @@ if (test2result.Results.length == 1) {
     console.log("FAIL: Test 2");
     console.log("Expected:", twentyLeaguesOut.Results.length);
     console.log("Received:", test2result.Results.length);
+}
+
+/* Negative test - check that results array is returned empty when searching for a term not in the book. */
+const test3result = findSearchTermInBooks("egg", twentyLeaguesIn);
+if (test3result.Results.length === 0) {
+    console.log("PASS: Test 3");
+} else {
+    console.log("FAIL: Test 3");
+    console.log("Expected emptry array");
+    console.log("Received:", test3result.Results);
+}
+
+// Case sensitive test: "The" vs "the"
+const test4result = findSearchTermInBooks("The", twentyLeaguesIn);
+if (JSON.stringify(twentyLeaguesOutTest4) === JSON.stringify(test4result)) {
+    console.log("PASS: Test 4");
+} else {
+    console.log("FAIL: Test 4");
+    console.log("Expected:", twentyLeaguesOutTest4);
+    console.log("Received:", test4result);
 }

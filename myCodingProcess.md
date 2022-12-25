@@ -106,3 +106,5 @@ scannedTextObj =
 - Ok it worked, in book_search_base_commented.
 
 - TODO: Finish examples, Email the questions, and then while waiting trying to finish all of the edge cases
+
+- 
