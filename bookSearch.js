@@ -19,19 +19,26 @@ const multipleBooks = require('./multipleBooks.json');
 
     for (book of scannedTextObj) {
         // console.log(book.Content);
-        for (item of book.Content) {
+        // ensure each book has the needed fields
+        if (book.Title && book.ISBN && book.Content) {
+            for (item of book.Content) {
 
-            let lineWhereFound = {}; // result to add if found
-            // console.log(item.Text);
-            if (item.Text.includes(searchTerm)) { // if we find the search term in the content item, add to result
-                lineWhereFound["ISBN"] = book.ISBN;
-                lineWhereFound["Page"] = item.Page;
-                lineWhereFound["Line"] = item.Line;
+                
+                if (
+                    item.Page && item.Line && item.Text // if all the necessary fields exist
+                    && item.Text.includes(searchTerm) // if we find the search term in the content item, add to result
+                ) { 
+                    let lineWhereFound = {}; // result to add if found
+                    // console.log(item.Text);
+                    lineWhereFound["ISBN"] = book.ISBN;
+                    lineWhereFound["Page"] = item.Page;
+                    lineWhereFound["Line"] = item.Line;
 
-                // console.log(lineWhereFound);
+                    // console.log(lineWhereFound);
 
-                result.Results.push(lineWhereFound);                
-            }
+                    result.Results.push(lineWhereFound);                
+                }
+        }
         }
     }
     
@@ -41,6 +48,55 @@ const multipleBooks = require('./multipleBooks.json');
 }
 
 /** Example input object. */
+const emptyBook = []
+
+const bookWithNoContent = [
+    {
+        "Title": "Twenty Thousand Leagues Under the Sea",
+        "ISBN": "9780000528531",
+        "Content": []
+    }
+]
+
+const manyBooksWithNoContent = [
+    {
+        "Title": "Twenty Thousand Leagues Under the Sea",
+        "ISBN": "9780000528531",
+        "Content": []
+    },
+    {
+        "Title": "Twenty Thousand Leagues Under the Sea",
+        "ISBN": "9780000528531",
+        "Content": []
+    },
+    {
+        "Title": "Twenty Thousand Leagues Under the Sea",
+        "ISBN": "9780000528531",
+        "Content": []
+    }
+]
+
+const booksMissingFields = [
+    {
+        "Title": "Twenty Thousand Leagues Under the Sea",
+        "ISBN": "9780000528531",
+    },
+    {
+        "Title": "Twenty Thousand Leagues Under the Sea",
+        "Content": []
+    },
+    {
+        "ISBN": "9780000528531",
+        "Content": []
+    },
+    {
+        "Title": "Twenty Thousand Leagues Under the Sea"
+    },
+    {
+
+    }
+]
+
 const twentyLeaguesIn = [
     {
         "Title": "Twenty Thousand Leagues Under the Sea",
@@ -159,6 +215,8 @@ function testFindSearchTermInBooks() {
 
 testFindSearchTermInBooks();
 
+// TODO: Turn these console.log's into tests
+// TODO: verify that the tests are accurate by ctrl+f'ing the terms in each json
 console.log("\n\nDRACULAAAAAAAA");
 console.log(findSearchTermInBooks("The",dracula));
 console.log(findSearchTermInBooks("vampire",dracula));
@@ -172,3 +230,26 @@ console.log(findSearchTermInBooks("the",multipleBooks));
 console.log(findSearchTermInBooks("Dracula",multipleBooks));
 console.log(findSearchTermInBooks("vampire",multipleBooks));
 console.log(findSearchTermInBooks("Canadian",multipleBooks));
+
+// EDGE CASES:
+// scannedTextObj = [], i.e. empty, so return empty results
+console.log(findSearchTermInBooks("The",emptyBook));
+
+// scannedTextObj has one book with an empty content field, so return empty results
+console.log(findSearchTermInBooks("The",bookWithNoContent));
+
+// scannedTextObj has many books all with empty content fields, so return empty results
+console.log(findSearchTermInBooks("The",manyBooksWithNoContent));
+
+console.log(findSearchTermInBooks("The",manyBooksWithNoContent));
+
+// BOOK LEVEL:
+// One really long book that would take a while to scan through
+
+// A series of small books, where:
+// None have an instance of the "searchTerm"
+// Where only one has an instance of the "searchTerm"
+// Every book except one has an instance of the "searchTerm"
+// Every single book has an instance of the "searchTerm"
+
+// And another set of examples, where the books that would have 1 instance have multiple instances 
