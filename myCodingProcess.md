@@ -113,3 +113,7 @@ scannedTextObj =
 
 - I tried searching the word "the" in the new dracula.json, and discovered my code was returning lines containing "they" as well
 - So I implemented regex word boundaries to prevent this error
+
+- I verified my results were correct by ctrl+f'ing the terms as regex in each json (see image for example)
+
+[INSERT IMAGE HERE]
