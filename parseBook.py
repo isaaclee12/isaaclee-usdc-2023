@@ -21,7 +21,7 @@ for page in pages:
         # prevent bad text
         if (line != "﻿       " and line != " "):
             outfile.write("{\n")
-            outfile.write("\t\"Page\": "+str(pageNumber)+",\n\t\"Line\": "+str(lineNumber)+",\n\t\"Text\": \""+line.replace("       ","")+"\"")
+            outfile.write("\t\"Page\": "+str(pageNumber)+",\n\t\"Line\": "+str(lineNumber + 1)+",\n\t\"Text\": \""+line.replace("       ","")+"\"")
             lineNumber += 1
             outfile.write("\n},\n")
 

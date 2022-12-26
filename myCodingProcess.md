@@ -76,13 +76,12 @@ scannedTextObj =
     - scannedTextObj has many books all with empty content fields, so return empty results
 
     - BOOK LEVEL:
-    - One really long book that would take a while to scan through
 
-    - A series of small books, where:
+    - Multiple small books, where:
         - None have an instance of the "searchTerm"
         - Where only one has an instance of the "searchTerm"
         - Every book except one has an instance of the "searchTerm"
-        - Every single book has an instance of the "searchTerm"
+        - Every book has an instance of the "searchTerm"
 
     - And another set of examples, where the books that would have 1 instance have multiple instances 
 
@@ -111,3 +110,6 @@ scannedTextObj =
 
 - console.log'd the results from various runs of the search function on the dracula.json
 - AND a json that combines dracula + 20000 leagues under the sea
+
+- I tried searching the word "the" in the new dracula.json, and discovered my code was returning lines containing "they" as well
+- So I implemented regex word boundaries to prevent this error

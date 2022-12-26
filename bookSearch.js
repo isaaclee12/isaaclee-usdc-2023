@@ -6,9 +6,9 @@ const multipleBooks = require('./multipleBooks.json');
  * @param {string} searchTerm - The word or term we're searching for. 
  * @param {JSON} scannedTextObj - A JSON object representing the scanned text.
  * @returns {JSON} - Search results.
- * */ 
+ * */
 
- function findSearchTermInBooks(searchTerm, scannedTextObj) {
+function findSearchTermInBooks(searchTerm, scannedTextObj) {
     /** You will need to implement your search and 
      * return the appropriate object here. */
 
@@ -17,18 +17,23 @@ const multipleBooks = require('./multipleBooks.json');
         "Results": []
     };
 
-    for (book of scannedTextObj) {
-        // console.log(book.Content);
-        // ensure each book has the needed fields
-        if (book.Title && book.ISBN && book.Content) {
+    // implement error catching
+    try {
+        for (book of scannedTextObj) {
+            // console.log(book.Content);
             for (item of book.Content) {
 
-                
-                if (
-                    item.Page && item.Line && item.Text // if all the necessary fields exist
-                    && item.Text.includes(searchTerm) // if we find the search term in the content item, add to result
-                ) { 
-                    let lineWhereFound = {}; // result to add if found
+                // \\b matches any word boundaries (double escaped because regex)
+                // and ^ and $ match then start/end of a string, respectively
+                const regex = new RegExp('(\\b|^)' + searchTerm + '(\\b|$)', "g");
+
+                // Debug code:
+                // console.log((regex) + " in " + item.Text + " = " + item.Text.match(regex));
+
+                let lineWhereFound = {}; // result to add if found
+
+                if (regex.test(item.Text)) { // if we find the search term in the content item, add to result 
+
                     // console.log(item.Text);
                     lineWhereFound["ISBN"] = book.ISBN;
                     lineWhereFound["Page"] = item.Page;
@@ -36,15 +41,17 @@ const multipleBooks = require('./multipleBooks.json');
 
                     // console.log(lineWhereFound);
 
-                    result.Results.push(lineWhereFound);                
+                    result.Results.push(lineWhereFound);
                 }
+            }
         }
-        }
+    } catch (e) {
+        console.error(e);
     }
-    
+
     // console.log(result);
 
-    return result; 
+    return result;
 }
 
 /** Example input object. */
@@ -116,14 +123,14 @@ const twentyLeaguesIn = [
                 "Page": 31,
                 "Line": 10,
                 "Text": "eyes were, I asked myself how he had managed to see, and"
-            } 
-        ] 
+            }
+        ]
     }
 ]
 
 
-    
-/** Example output object */
+
+/** Example output objects */
 const twentyLeaguesOutTest1 = {
     "SearchTerm": "the",
     "Results": [
@@ -151,6 +158,43 @@ const twentyLeaguesOutTest3 = {
         }
     ]
 }
+
+const draculaTest1 = {
+  SearchTerm: 'The',
+  Results: [
+    { ISBN: '9781530681037', Page: 4, Line: 2 },
+    { ISBN: '9781530681037', Page: 4, Line: 8 },
+    { ISBN: '9781530681037', Page: 5, Line: 7 },
+    { ISBN: '9781530681037', Page: 7, Line: 21 }
+  ]
+}
+
+const draculaTest2 = {
+    SearchTerm: 'vampire', // Ironically, the word "vampire" does not actually show up in the json
+    Results: []
+}
+
+const draculaTest3 = {
+  SearchTerm: 'Dracula',
+  Results: [
+    { ISBN: '9781530681037', Page: 4, Line: 28 },
+    { ISBN: '9781530681037', Page: 5, Line: 19 },
+    { ISBN: '9781530681037', Page: 6, Line: 2 }
+  ]
+}
+
+const draculaTest4 = { 
+    SearchTerm: 'dracula', // Case sensitive test, "dracula" as a word only ever has a capital "D"
+    Results: [] 
+}
+
+const draculaTest5 = {
+  SearchTerm: 'Mina', // Mina is one of the main characters, so one would expect their name to appear
+  Results: [ { ISBN: '9781530681037', Page: 7, Line: 19 } ]
+}
+
+
+
 
 /*
  _   _ _   _ ___ _____   _____ _____ ____ _____ ____  
@@ -197,16 +241,17 @@ function testFindSearchTermInBooksHelper(testNumber, searchTerm, bookInput, expe
 
 function testFindSearchTermInBooks() {
     if (
-    // Positive test - check that the results has a specific length and content 
-    testFindSearchTermInBooksHelper(1, "the", twentyLeaguesIn, 1, twentyLeaguesOutTest1) &&
+        // Positive test - check that the results has a specific length and content 
+        testFindSearchTermInBooksHelper(1, "the", twentyLeaguesIn, 1, twentyLeaguesOutTest1) &&
 
-    // Negative test - check that results array is returned empty when searching for a term not in the book.
-    testFindSearchTermInBooksHelper(2, "egg", twentyLeaguesIn, 0, twentyLeaguesOutTest2) &&
+        // Negative test - check that results array is returned empty when searching for a term not in the book.
+        testFindSearchTermInBooksHelper(2, "egg", twentyLeaguesIn, 0, twentyLeaguesOutTest2) &&
 
-    // Case sensitive test: "The" vs "the"
-    testFindSearchTermInBooksHelper(3, "The", twentyLeaguesIn, 1, twentyLeaguesOutTest3)
-    ) 
-    {
+        // Case sensitive test: "The" vs "the"
+        testFindSearchTermInBooksHelper(3, "The", twentyLeaguesIn, 1, twentyLeaguesOutTest3) //&&
+
+        // testFindSearchTermInBooksHelper(testNumber, "The", dracula, EXPECTEDLENGTH, EXPECTEDOUT))
+    ) {
         console.log("ALL TESTS PASSED");
     } else {
         console.log("TESTS FAILED: See above test for info");
@@ -217,21 +262,28 @@ testFindSearchTermInBooks();
 
 // TODO: Turn these console.log's into tests
 // TODO: verify that the tests are accurate by ctrl+f'ing the terms in each json
-console.log("\n\nDRACULAAAAAAAA");
-console.log(findSearchTermInBooks("The",dracula));
-console.log(findSearchTermInBooks("vampire",dracula));
-console.log(findSearchTermInBooks("Dracula",dracula));
-console.log(findSearchTermInBooks("dracula",dracula));
-console.log(findSearchTermInBooks("Mina",dracula));
+// console.log("\n\nSearching Dracula by Bram Stoker:");
+
+
+// console.log(findSearchTermInBooks("The",dracula));
+// console.log(findSearchTermInBooks("vampire", dracula));
+// console.log(findSearchTermInBooks("Dracula",dracula));
+// console.log(findSearchTermInBooks("dracula",dracula));
+// console.log(findSearchTermInBooks("Mina",dracula));
+
+
+/*
 
 console.log("\n\nall the books");
-console.log(findSearchTermInBooks("The",multipleBooks));
-console.log(findSearchTermInBooks("the",multipleBooks));
-console.log(findSearchTermInBooks("Dracula",multipleBooks));
-console.log(findSearchTermInBooks("vampire",multipleBooks));
-console.log(findSearchTermInBooks("Canadian",multipleBooks));
+// console.log(findSearchTermInBooks("The",multipleBooks));
+// console.log(findSearchTermInBooks("the",multipleBooks));
+// console.log(findSearchTermInBooks("Dracula",multipleBooks));
+// console.log(findSearchTermInBooks("vampire",multipleBooks));
+// console.log(findSearchTermInBooks("Canadian",multipleBooks));
 
 // EDGE CASES:
+console.log("\n\n edge cases");
+
 // scannedTextObj = [], i.e. empty, so return empty results
 console.log(findSearchTermInBooks("The",emptyBook));
 
@@ -241,15 +293,9 @@ console.log(findSearchTermInBooks("The",bookWithNoContent));
 // scannedTextObj has many books all with empty content fields, so return empty results
 console.log(findSearchTermInBooks("The",manyBooksWithNoContent));
 
-console.log(findSearchTermInBooks("The",manyBooksWithNoContent));
+// Should catch error since book object is improperly formatted
+// This test was good to do as it reminded me to catch any edge case errors like these
+console.log(findSearchTermInBooks("The",booksMissingFields));
 
-// BOOK LEVEL:
-// One really long book that would take a while to scan through
 
-// A series of small books, where:
-// None have an instance of the "searchTerm"
-// Where only one has an instance of the "searchTerm"
-// Every book except one has an instance of the "searchTerm"
-// Every single book has an instance of the "searchTerm"
-
-// And another set of examples, where the books that would have 1 instance have multiple instances 
+*/
