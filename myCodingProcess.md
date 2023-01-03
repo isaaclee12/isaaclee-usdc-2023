@@ -116,4 +116,8 @@ scannedTextObj =
 
 - I verified my results were correct by ctrl+f'ing the terms as regex in each json (see image for example)
 
-[INSERT IMAGE HERE]
+<img src="testingTheButWithRegex.jpg" alt="Image of me finding terms in the JSON manually with ctrl+f"/>
+
+- I added some edge cases regarding empty arrays, empty field values, and missing fields
+
+- Will email the people running this exam and wait to hear back before final revisions and submissions
