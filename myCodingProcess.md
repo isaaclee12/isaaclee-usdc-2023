@@ -1,4 +1,3 @@
-<!-- TODO: Convert this to pdf later -->
 # My Process
 ## Setup:
 - To begin, I forked the repo and cloned that fork into VSCode. In a real-life engineering setting, I would plan to make a pull request to the original repository, though that seems unnecessary for this challenge.
@@ -119,7 +118,34 @@ scannedTextObj =
 
 - I then compared "dracula.txt" to a real copy of Dracula to see where the page cutoffs were, and added a ":::" in the .txt file as points where a python script could split the book.
 
-- I wrote an ad hoc/brute force algorithm that would take dracula.txt and morph it into a JSON-like format. The result printed out in dracula_lines.txt
+- I wrote an ad hoc Python algorithm that would take dracula.txt and morph it into a JSON-like format. The result printed out in dracula_lines.txt:
+
+```
+# Custom code specifically for parsing Bram Stoker's Dracula
+# Public Domain txt File acquired from gutenberg.org
+# Page seperation added manually by going looking at the page split of the actual book
+
+f = open("dracula.txt", "r", encoding="utf-8")
+outfile = open("dracula_lines.txt", "w", encoding="utf-8")
+pages = f.read().split(":::")
+pageNumber = 4
+
+outfile.write("[\n{ \"Title\": \"Dracula\",\n\"ISBN\": \"9781530681037\",\n\"Content\":[\n")
+for page in pages:
+    page = page.split("\n")
+    lineNumber = 0
+    for line in page:
+        if (line != "﻿       " and line != " "): # prevent bad text
+            outfile.write("{\n")
+            outfile.write("\t\"Page\": "+str(pageNumber)+",\n\t\"Line\": "+str(lineNumber + 1)+",\n\t\"Text\": \""+line.replace("       ","")+"\"")
+            lineNumber += 1
+            outfile.write("\n},\n")
+    pageNumber += 1
+
+outfile.write("]}]\n")
+f.close()
+outfile.close()
+```
 
 - For the sake of time, I didn't make my python algorithm thorough, since doing so isn't required to fulfill the challenge, and opted to manually format some small errors that printed to dracula_lines.txt.
 
@@ -143,7 +169,7 @@ scannedTextObj =
 
 ## Wrap Up
 
-- I like to be thorough on how these problems should be solved, so I emailed the USDC with the questions below, and waited to hear back before submitting my code:
+- I like to be thorough when programming, so I emailed the USDC with the questions below, and waited to hear back before submitting my code:
     - Should we account for cases in which searchTerm is NOT a string, e.g. is null, undefined, or any native js type that's not a string?
     - Should we ALWAYS expect scannedTextObj to:
         - A. always be a JSON in this format with these exact keys and value-types
@@ -151,4 +177,12 @@ scannedTextObj =
     - Even if the question may be trivial, I will ask if there's any time we might need to return something unexpected.
     - If the examples that I've come up with were to pass, would you be satisfied saying that I've solved the problem?
 
-- I heard back, and they said they weren't allowed tell me anything. Given that this challenge is meant to be completed in around 2 hours, I reckon that they're not looking for anything insanely robust, e.g. O(1) execution on a JSON containing thousands of lines. As such, I decided that the work I've done is likely to satisfy the requirements of the challenge.
+- I heard back, and they said they weren't allowed tell me anything, which I expected might be the case. Given that this challenge is meant to be completed in around 2 hours, I decided that the work I'd done was likely to satisfy the requirements of the challenge.
+
+- I made sure to read through all of the instructions one last time to ensure I did not miss anything.
+
+- I quickly realized that I'd only be submitting tester.html and bookSearch.js, so I made sure to move the contents of the JSON files into bookSearch.js, and consolidated all the important code to the bottom of the file (the JSONs need to be first or it doesn't work).
+
+- I also added some big ASCII text, to match the theme, and did a little more polishing before submitting.
+
+- Thank you for the challenge, I had a great time. I appreciate any feedback that you may have.
