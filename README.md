@@ -12,13 +12,6 @@ Either should work; we tested under both on Mac and Linux.
 
 You will submit both the HTML and JavaScript files when you are done. You should not need to edit `tester.html`. We expect all of your work to appear in the file `book_search.js`. 
 
-## Submission
-
-Directions for submission are in the prompt. As a reminder, you should commit your code to a repository called
-
-*firstnamelastname*-usdc-2023
-
-
 # My Process
 ## Setup:
 - To begin, I forked the repo and cloned that fork into VSCode. In a real-life engineering setting, I would plan to make a pull request to the original repository, though that seems unnecessary for this challenge.
