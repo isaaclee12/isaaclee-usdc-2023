@@ -1,7 +1,7 @@
 # Custom code specifically for parsing Bram Stoker's Dracula
 # Public Domain txt File acquired from gutenberg.org
 # Page seperation added manually by going looking at the page split of the actual book
-    # Thankfully, I only used a few pages so this was easy
+# Thankfully, I only used a few pages so this was easy
 
 f = open("dracula.txt", "r", encoding="utf-8")
 outfile = open("dracula_lines.txt", "w", encoding="utf-8")
